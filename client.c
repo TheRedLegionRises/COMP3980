@@ -263,10 +263,10 @@ static int send_to_server(char *arg, int sockfd)
 {
     //    write(STDOUT_FILENO, arg, sizeof(arg));
 
-    uint8_t size = (uint8_t)strlen(arg);
+    uint32_t size = (uint32_t)strlen(arg);
     char    buffer[LENGTH];
     //    unsigned long size = strlen(arg);
-    send(sockfd, &size, sizeof(uint8_t), 0);
+    send(sockfd, &size, sizeof(uint32_t), 0);
     write(sockfd, arg, sizeof(arg));
 
     while(1)
