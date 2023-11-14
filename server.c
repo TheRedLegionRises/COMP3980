@@ -372,10 +372,10 @@ static void handle_connection(int client_sockfd, struct sockaddr_storage *client
 
         int arraySize = tokenizeString(path, strTokValue, (char **)&listOfPaths);
 
-        uint32_t size;
-        char    buffer[UINT32_MAX + 1];
+        uint16_t size;
+        char     buffer[UINT16_MAX + 1];
 
-        read(client_sockfd, &size, sizeof(uint32_t));
+        read(client_sockfd, &size, sizeof(uint16_t));
         // These 2 are normal
         read(client_sockfd, buffer, size);
 
