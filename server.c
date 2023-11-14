@@ -387,7 +387,7 @@ static void handle_connection(int client_sockfd, struct sockaddr_storage *client
             for(int i = 0; i < arraySize; i++)
             {
                 strncpy(currentPath, listOfPaths[i], strlen(listOfPaths[i]));
-                strncat(currentPath, "/", strlen("/"));
+                strncat(currentPath, "/", strlen("/") + 1);
                 strncat(currentPath, argList[0], strlen(argList[0]));
 
                 if(access(currentPath, X_OK) != -1)
