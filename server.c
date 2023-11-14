@@ -386,9 +386,9 @@ static void handle_connection(int client_sockfd, struct sockaddr_storage *client
 
             for(int i = 0; i < arraySize; i++)
             {
-                strncpy(currentPath, listOfPaths[i], strlen(listOfPaths[i]));
-                strncat(currentPath, "/", strlen("/") + 1);
-                strncat(currentPath, argList[0], strlen(argList[0]));
+                strncpy(currentPath, listOfPaths[i], sizeof(currentPath) - 1);
+                strncat(currentPath, "/", sizeof(currentPath) - strlen(currentPath) - 1);
+                strncat(currentPath, argList[0], sizeof(currentPath) - strlen(currentPath) - 1);
 
                 if(access(currentPath, X_OK) != -1)
                 {
@@ -432,7 +432,7 @@ int tokenizeString(char *string, const char *delimiter, char *array[])
 
     while((token = strtok_r(rest, delimiter, &rest)))
     {
-        printf("Path: %s", token);
+        //        printf("Path: %s", token);
         array[arraySize] = token;
         arraySize++;
     }
