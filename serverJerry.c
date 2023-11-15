@@ -41,7 +41,7 @@ static int            socket_accept_connection(int server_fd, struct sockaddr_st
 static void           handle_connection(int client_sockfd, struct sockaddr_storage *client_addr);
 static void           socket_close(int sockfd);
 
-int tokenizeString(char* string, const char* delimiter, char* array[]);
+int tokenizeString(char *string, const char *delimiter, char *array[]);
 
 #define UNKNOWN_OPTION_MESSAGE_LEN 24
 #define BASE_TEN 10
@@ -355,52 +355,59 @@ static void handle_connection(int client_sockfd, struct sockaddr_storage *client
 {
     pid_t childPid;
     childPid = fork();
-    if (childPid == 0) {
-//        int temp_fd = open("temp_file.txt", O_WRONLY | O_CREAT, 0666);
-//        dup2(client_sockfd, STDOUT_FILENO);
+    if(childPid == 0)
+    {
+        //        int temp_fd = open("temp_file.txt", O_WRONLY | O_CREAT, 0666);
+        //        dup2(client_sockfd, STDOUT_FILENO);
 
-//        printf("Child starts\n");
+        //        printf("Child starts\n");
         char *path = getenv("PATH");
 
         const char strTokValue[2] = ":";
         const char argTokValue[2] = " ";
-        char *argList[LENGTH];
-        char *listOfPaths[LENGTH];
+        char      *argList[LENGTH];
+        char      *listOfPaths[LENGTH];
 
-//    printf("Total path: %s\n", path);
+        //    printf("Total path: %s\n", path);
 
-        int arraySize = tokenizeString(path, strTokValue, (char **) &listOfPaths);
+        int arraySize = tokenizeString(path, strTokValue, (char **)&listOfPaths);
 
         uint8_t size;
-        char buffer[UINT8_MAX + 1];
+        char    buffer[UINT8_MAX + 1];
 
         read(client_sockfd, &size, sizeof(uint8_t));
-//These 2 are normal
+        // These 2 are normal
         read(client_sockfd, buffer, size);
 
+        tokenizeString(buffer, argTokValue, (char **)&argList);
+        if(argList[0] != NULL)
+        {
+            char currentPath[LENGTH];
 
-        tokenizeString(buffer, argTokValue, (char**) &argList);
+            for(int i = 0; i < arraySize; i++)
+            {
+                strncpy(currentPath, listOfPaths[i], sizeof(currentPath) - 1);
+                strncat(currentPath, "/", sizeof(currentPath) - strlen(currentPath) - 1);
+                strncat(currentPath, argList[0], sizeof(currentPath) - strlen(currentPath) - 1);
 
-        char currentPath[LENGTH];
-
-        for (int i = 0; i < arraySize; i++) {
-            strcpy(currentPath, listOfPaths[i]);
-            strcat(currentPath, "/");
-            strcat(currentPath, argList[0]);
-
-            if(access(currentPath, X_OK) != -1) {
-//                printf("Current Path: %s\n", currentPath);
-                break;
+                if(access(currentPath, X_OK) != -1)
+                {
+                    //                printf("Current Path: %s\n", currentPath);
+                    break;
+                }
             }
-        }
 
-        if(dup2(client_sockfd, STDOUT_FILENO) == -1){
-            perror("Dup2 Failed");
-        }
+            if(dup2(client_sockfd, STDOUT_FILENO) == -1)
+            {
+                perror("Dup2 Failed");
+            }
 
-        if (execv(currentPath, argList) == -1) {
-            if (errno == ENOENT) {
-                printf("Execv failed: Incorrect path or invalid argument\n");
+            if(execv(currentPath, argList) == -1)
+            {
+                if(errno == ENOENT)
+                {
+                    printf("Execv failed: Incorrect path or invalid argument\n");
+                }
             }
         }
     }
@@ -417,12 +424,14 @@ static void socket_close(int sockfd)
     }
 }
 
-int tokenizeString(char* string, const char* delimiter, char* array[]) {
-    int arraySize = 0;
+int tokenizeString(char *string, const char *delimiter, char *array[])
+{
+    int   arraySize = 0;
     char *token;
-    char* rest = string;
+    char *rest = string;
 
-    while((token = strtok_r(rest, delimiter, &rest))) {
+    while((token = strtok_r(rest, delimiter, &rest)))
+    {
         printf("Path: %s", token);
         array[arraySize] = token;
         arraySize++;
