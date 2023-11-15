@@ -34,7 +34,7 @@ static void           convert_address(const char *address, struct sockaddr_stora
 static int            socket_create(int domain, int type, int protocol);
 static void           socket_connect(int sockfd, struct sockaddr_storage *addr, in_port_t port);
 static void           socket_close(int sockfd);
-static int            send_to_server(char *arg, int sockfd);
+static int            send_to_server(const char *arg, int sockfd);
 
 #define UNKNOWN_OPTION_MESSAGE_LEN 24
 #define BASE_TEN 10
@@ -277,7 +277,7 @@ static void socket_close(int sockfd)
     }
 }
 
-static int send_to_server(char *arg, int sockfd)
+static int send_to_server(const char *arg, int sockfd)
 {
     //    write(STDOUT_FILENO, arg, sizeof(arg));
 
