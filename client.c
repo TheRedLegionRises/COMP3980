@@ -94,21 +94,39 @@ static void parse_arguments(int argc, char *argv[], char **address, char **port,
         }
     }
 
+    //    if(optind + 1 >= argc)
+    //    {
+    //        usage(argv[0], EXIT_FAILURE, "Too few arguments.");
+    //    }
+    //
+    //    if(optind < argc - 3)
+    //    {
+    //        usage(argv[0], EXIT_FAILURE, "Too many arguments.");
+    //    }
+    if(optind >= argc)
+    {
+        usage(argv[0], EXIT_FAILURE, "The ip address, port and command are required");
+    }
+
     if(optind + 1 >= argc)
     {
-        usage(argv[0], EXIT_FAILURE, "Too few arguments.");
+        usage(argv[0], EXIT_FAILURE, "The port and command are required");
+    }
+
+    if(optind + 2 >= argc)
+    {
+        usage(argv[0], EXIT_FAILURE, "The execv command is required");
     }
 
     if(optind < argc - 3)
     {
-        usage(argv[0], EXIT_FAILURE, "Too many arguments.");
+        usage(argv[0], EXIT_FAILURE, "Error: Too many arguments.");
     }
-
     *address = argv[optind];
     *port    = argv[optind + 1];
     *command = argv[optind + 2];
 
-    printf("Command: %s\n", *command);
+    //    printf("Command: %s\n", *command);
 }
 
 static void handle_arguments(const char *binary_name, const char *address, const char *port_str, in_port_t *port)
@@ -265,9 +283,10 @@ static int send_to_server(char *arg, int sockfd)
 
     uint16_t size = (uint16_t)strlen(arg);
     char     buffer[LENGTH];
+    //    printf("Arg length: %d\n", size);
     //    unsigned long size = strlen(arg);
     send(sockfd, &size, sizeof(uint16_t), 0);
-    write(sockfd, arg, sizeof(arg));
+    write(sockfd, arg, strlen(arg));
 
     while(1)
     {

@@ -378,7 +378,7 @@ static void handle_connection(int client_sockfd, struct sockaddr_storage *client
         read(client_sockfd, &size, sizeof(uint16_t));
         // These 2 are normal
         read(client_sockfd, buffer, size);
-
+        //        printf("Buffer: %s\n", buffer);
         tokenizeString(buffer, argTokValue, (char **)&argList);
         if(argList[0] != NULL)
         {
@@ -395,18 +395,26 @@ static void handle_connection(int client_sockfd, struct sockaddr_storage *client
                     //                printf("Current Path: %s\n", currentPath);
                     break;
                 }
+
+                if(i == arraySize - 1)
+                {
+                    perror("Invalid path\n");
+                    exit(EXIT_FAILURE);
+                }
             }
 
             if(dup2(client_sockfd, STDOUT_FILENO) == -1)
             {
                 perror("Dup2 Failed");
+                exit(EXIT_FAILURE);
             }
 
             if(execv(currentPath, argList) == -1)
             {
                 if(errno == ENOENT)
                 {
-                    printf("Execv failed: Incorrect path or invalid argument\n");
+                    perror("Execv failed: Incorrect invalid argument\n");
+                    exit(EXIT_FAILURE);
                 }
             }
         }
@@ -432,7 +440,7 @@ int tokenizeString(char *string, const char *delimiter, char *array[])
 
     while((token = strtok_r(rest, delimiter, &rest)))
     {
-        printf("Path: %s", token);
+        //        printf("Path: %s", token);
         array[arraySize] = token;
         arraySize++;
     }
