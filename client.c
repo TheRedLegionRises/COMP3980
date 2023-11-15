@@ -286,7 +286,7 @@ static int send_to_server(char *arg, int sockfd)
     //    printf("Arg length: %d\n", size);
     //    unsigned long size = strlen(arg);
     send(sockfd, &size, sizeof(uint16_t), 0);
-    write(sockfd, arg, strlen(arg));
+    write(sockfd, arg, size);
 
     while(1)
     {
